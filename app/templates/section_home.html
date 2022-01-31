@@ -1,0 +1,34 @@
+{% extends "index.html"%}
+
+{% block content %}
+
+<h2>Section Management </h2>
+
+{% for s in sections.keys() %}
+
+    {{ sections[s]["section_id"] }}  
+    <a href="/students/{{ sections[s]['sections_id'] }}">{{ sections[s]["semester"] }} {{ sections[s]["year"] }} </a> 
+
+    || <form action="/sections/{{sections[s]['sections_id']}}/delete" method="post"> 
+        <button type="submit">Delete</button>
+    </form>
+    || <a href="/sections/{{ sections[s]['section_id'] }}/edit"> Edit</a>
+    <br>
+
+{% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}
