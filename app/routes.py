@@ -1,11 +1,13 @@
 
+from crypt import methods
+from importlib_metadata import re
 from app import app
 from flask import redirect, render_template, request, flash
-from app.forms import DepartmentAdd, SectionAdd, CourseAdd, StudentAdd, InstructorAdd
+from app.forms import DepartmentAdd, SectionAdd, CourseAdd, StudentAdd, InstructorAdd, Section_course
 import requests
 import json
 
-base_url = 'https://dbmsProject.dbmsprojectrepl.repl.co'
+base_url = 'http://127.0.0.1:5000/'
 
 @app.route('/')
 def index():
@@ -39,6 +41,8 @@ def students():
 @app.route('/students/add', methods=['GET', 'POST'])
 def add_students():
   form = StudentAdd(request.form)
+  
+  #API calls to the server
   departments = requests.get(base_url+'/api/departments').json()
   sections = requests.get(base_url+'/api/sections').json()
 
@@ -65,6 +69,7 @@ def add_students():
     print(form.dept_id.data)
     flash(form.errors)
     return "sorry not valid"
+
   return render_template('add_students.html', form=form)
 
 
@@ -111,20 +116,6 @@ def student_edit(id):
     form.dept_id.choices = department_names_choices
     form.sec_id.choices = semesters_choices
 
-    form.name.data = student["student_name"]
-    if student["dept_id"] in department_ids:
-      form.dept_id.data  = (student["dept_id"], department_names[student["dept_id"]])
-    else:
-      form.dept_id.choices.append((-1, "unassigned"))
-      form.dept_id.data = (-1, "unassigned")
-
-    form.credits.data = student["credits"]
-    if student["sec_id"] in section_ids:
-      form.sec_id.data = (student["sec_id"], semesters[student["sec_id"]])
-    else:
-      form.sec_id.choices.append((-1, "assigned"))
-      form.sec_id.data = (-1, "assigned")
-
   if request.method == 'POST' and form.validate():
     print(form.name.data, form.dept_id.data)
     data={"name":form.name.data, "credits":form.credits.data, "dept_id":form.dept_id.data, "sec_id":form.sec_id.data}
@@ -140,6 +131,20 @@ def student_edit(id):
     print(form.dept_id.data)
     flash(form.errors)
     return "sorry not valid"
+  
+  form.name.data = student["student_name"]
+  if student["dept_id"] in department_ids:
+    form.dept_id.data  = (student["dept_id"], department_names[student["dept_id"]])
+  else:
+    form.dept_id.choices.append((-1, "unassigned"))
+    form.dept_id.data = (-1, "unassigned")
+
+  form.credits.data = student["credits"]
+  if student["sec_id"] in section_ids:
+    form.sec_id.data = (student["sec_id"], semesters[student["sec_id"]])
+  else:
+    form.sec_id.choices.append((-1, "assigned"))
+    form.sec_id.data = (-1, "assigned")
 
   return render_template('edit_student.html', form=form, student=student, department_names=department_names, semesters=semesters, years=years)
 
@@ -204,8 +209,6 @@ def edit_department(id):
   response = requests.get(base_url+'/api/departments/'+str(id))
   department = response.json()
   print(department)
-  form.name.data = department["name"]
-  form.budget.data = department["dept_budget"]
   if request.method == 'POST' and form.validate():
     print(form.name.data, form.budget.data)
     data={"name":form.name.data, "budget":form.budget.data}
@@ -219,6 +222,8 @@ def edit_department(id):
     flash(form.errors)
   
   if department:
+    form.name.data = department["name"]
+    form.budget.data = department["dept_budget"]
     return render_template('edit_department.html', department=department, form=form)
   else:
     return "sorry"
@@ -283,20 +288,17 @@ def edit_instructors(id):
   departments = requests.get(base_url+'/api/departments').json()
   department_names = {departments[dept]["dept_id"]: departments[dept]["name"] for dept in departments.keys()}
   department_ids = [departments[dept]["dept_id"] for dept in departments.keys()]
-
-  if instructor["dept_id"] in department_ids:
-    pass
-  else:
-    form.dept_id.choices.append((-1, "unassigned"))
     
   
   if departments and instructor:
-    print(courses, departments, instructor)
+    print(departments, instructor)
 
     department_names = {departments[dept]["dept_id"]: departments[dept]["name"] for dept in departments.keys()}
     department_names_choices = [(departments[dept]["dept_id"], departments[dept]["name"]) for dept in departments.keys()]
 
     form.dept_id.choices = department_names_choices
+    if instructor["dept_id"] not in department_ids:
+      form.dept_id.choices.append((-1, "unassigned"))
 
   if request.method == 'POST' and form.validate():
     print(form.name.data, form.dept_id.data)
@@ -313,16 +315,15 @@ def edit_instructors(id):
     print(form.dept_id.data)
     flash(form.errors)
     return "sorry not valid"
-  
+
   form.name.data = instructor["instructor_name"]
   if instructor["dept_id"] not in department_ids:
     form.dept_id.data = (-1, "unassigned")
   form.dept_id.data  = (instructor["dept_id"], department_names[instructor["dept_id"]])
   form.salary.data = instructor["salary"]
-
   return render_template('edit_instructor.html', form=form, department_names=department_names, instructor=instructor)
 
-
+# Delete instructors
 @app.route('/instructors/<int:id>/delete', methods=['GET', 'POST'])
 def delete_instructor(id):
   instructor = requests.delete(base_url+'/api/instructors/'+str(id)).json()
@@ -350,7 +351,7 @@ def courses():
   else:
     return "sorry"
 
-
+# Add Courses
 @app.route('/courses/add', methods=['GET', 'POST'])
 def add_courses():
   form = CourseAdd(request.form)
@@ -379,6 +380,7 @@ def add_courses():
 
   return render_template('add_courses.html', form=form)
 
+# Edit Courses
 @app.route('/courses/<int:id>/edit', methods=['GET', 'POST'])
 def edit_courses(id):
 
@@ -422,7 +424,7 @@ def edit_courses(id):
   return render_template('edit_course.html', form=form, course=course)
 
 
-
+# Delete Courses
 @app.route('/courses/<int:id>/delete', methods=['GET', 'POST','DELETE'])
 def delete_course(id):
   response = requests.delete(base_url+'/api/courses/'+str(id))
@@ -433,7 +435,7 @@ def delete_course(id):
   else:
     return "sorry"
 
-
+# Get section details
 @app.route('/sections', methods=['GET'])
 def sections():
   sections = requests.get(base_url+'/api/sections').json()
@@ -449,10 +451,30 @@ def sections():
   else:
     return "sorry"
 
+# Edit sections
+@app.route('/sections/<int:id>/edit', methods=['GET', 'POST'])
+def edit_sections(id):
+  form = SectionAdd(request.form)
+  section = requests.get(base_url+'/api/sections/'+str(id)).json()
+  print(section)
+  if request.method == 'POST' and form.validate():
+    data={"semester":form.semester.data, "year":form.year.data}
+    headers = {'content-type': 'application/json'}
+    print(data)
+    url = base_url+'/api/sections/'+str(id)
+    student = requests.put(url, headers=headers, json=json.dumps(data))
+    flash("Success!!")
+    return redirect('/sections')
+  
+  elif request.method == 'POST' and not form.validate():
+    print(form.errors)
 
+  form.semester.data = section['0']['semester']
+  form.year.data = section['0']['year']
+  return render_template('edit_section.html', form=form, section=section)
+  
 
-
-
+# Add new Sections
 @app.route('/sections/add', methods=['GET', 'POST'])
 def add_sections():
   form = SectionAdd(request.form)
@@ -472,9 +494,136 @@ def add_sections():
     url = base_url+'/api/sections'
     student = requests.post(url, headers=headers, json=json.dumps(data))
     flash("Success!!")
-    return redirect('/sections/add')
+    return redirect('/sections')
   
   elif request.method == 'POST' and not form.validate():
     print(form.errors)
 
   return render_template('add_sections.html', form=form)
+
+
+# Individual Section details
+@app.route('/sections/<int:id>', methods=['GET', 'POST'])
+def section_home(id):
+  section = requests.get(base_url + '/api/sections/'+str(id)).json()['0']
+  section_courses = requests.get(base_url +'/api/sec_courses/'+str(id)).json()
+  section_course_ids = [section_courses[c]['course_id'] for c in section_courses.keys()]
+  courses = {}
+  i = 0
+  for ids in section_course_ids:
+    k = requests.get(base_url+'/api/courses/'+str(ids)).json()
+    courses[i] = k
+    i += 1
+  print(courses)
+
+  if section:
+    return render_template("section_page.html", section=section, courses=courses)
+  
+  return "sorry"
+
+# Add Instructors to Sections
+@app.route('/sections/<int:id>/add/instructors', methods=['GET', 'POST'])
+def add_instructors_to_section(id):
+
+  section = requests.get(base_url+'/api/sections/'+str(id)).json()['0']
+  section_instructors = section['instructors']
+  instructors = requests.get(base_url + '/api/instructors').json()
+
+  section_instructor_ids = set([section_instructors[s]['instructor_id'] for s in section_instructors.keys()])
+  instructor_ids = set([instructors[i]['instructor_id'] for i in instructors.keys()])
+  instructor_option_ids = list(instructor_ids - section_instructor_ids)
+  instructor_options = [(instructors[i]['instructor_id'], instructors[i]['instructor_name']) for i in instructors.keys() if instructors[i]['instructor_id'] in instructor_option_ids]
+  instructor_names = {instructors[i]['instructor_id']:instructors[i]['instructor_name'] for i in instructors if instructors[i]['instructor_id'] in instructor_option_ids}
+  print(instructor_names)
+  print(instructor_options)
+
+  form = SectionAdd(request.form)
+  form.instructors.choices = instructor_options
+  form.semester.data = section['semester']
+  form.year.data = section['year']
+
+  if request.method == 'POST' and form.validate():
+    print(form.instructors.data)
+    instructor_user_choices = {int(choice): instructor_names[int(choice)] for choice in form.instructors.data}
+    data={"semester":form.semester.data, "year":form.year.data, "instructors":instructor_user_choices}
+    headers = {'content-type': 'application/json'}
+    print(data)
+    url = base_url+ '/api/sec_instructors/' + str(id)
+    student = requests.post(url, headers=headers, json=json.dumps(data))
+    flash("Success!!")
+    return redirect('/sections/'+str(id))
+  
+  elif request.method == 'POST' and not form.validate():
+    print(form.errors)
+  
+  return render_template('add_instructor_to_sections.html', form=form, section=section)
+
+# Remove instructors from Sections
+@app.route('/sections/<int:id>/delete/instructor/<int:iid>', methods=['GET', 'POST'])
+def remove_instructors_from_sections(id, iid):
+  print(iid)
+  data = {"instructor_id":iid}
+  response = requests.delete(base_url+'/api/sec_instructors/'+str(id), json=json.dumps(data)).json()
+  print(response)
+  if response:
+    return redirect(f'/sections/{id}')
+  else:
+    return "sorry"
+
+
+# Add courses to sections
+@app.route('/sections/<int:id>/add/courses', methods=['GET', 'POST'])
+def add_courses_to_sections(id):
+  section = requests.get(base_url+'/api/sections/'+str(id)).json()['0']
+  section_courses = requests.get(base_url + '/api/sec_courses/'+str(id)).json()
+  courses = requests.get(base_url+'/api/courses').json()
+  print(courses)
+  section_course_ids = set([section_courses[s]['course_id'] for s in section_courses.keys()])
+  course_ids = set([courses[i]['course_id'] for i in courses.keys()])
+  course_option_ids = list(course_ids - section_course_ids)
+  course_options = [(courses[i]['course_id'], courses[i]['course_title']) for i in courses.keys() if courses[i]['course_id'] in course_option_ids]
+  course_names = {courses[i]['course_id']:courses[i]['course_title'] for i in courses if courses[i]['course_id'] in course_option_ids}
+  print(course_names)
+  print(course_options)
+
+  form = Section_course(request.form)
+  form.course_id.choices = course_options
+  form.sec_id.data = id 
+  
+  if request.method == 'POST' and form.validate():
+    print(form.course_id.data)
+    course_user_choices = {int(choice): course_names[int(choice)] for choice in form.course_id.data}
+    data={"sec_id":form.sec_id.data, "course_id":course_user_choices}
+    headers = {'content-type': 'application/json'}
+    print(data)
+    url = base_url+ '/api/sec_courses/' + str(id)
+    student = requests.post(url, headers=headers, json=json.dumps(data))
+    flash("Success!!")
+    return redirect('/sections/'+str(id))
+  
+  elif request.method == 'POST' and not form.validate():
+    print(form.errors)
+  
+  return render_template('add_course_to_sections.html', form=form, section=section)
+
+
+@app.route('/sections/<int:id>/delete/course/<int:cid>', methods=['GET', 'POST'])
+def remove_courses_from_sections(id, cid):
+  print(cid)
+  data = {"course_id":cid}
+  response = requests.delete(base_url+'/api/sec_courses/'+str(id), json=json.dumps(data)).json()
+  print(response)
+  if response:
+    return redirect(f'/sections/{id}')
+  else:
+    return "sorry"
+
+
+@app.route('/sections/<int:id>/delete', methods=['GET', 'POST'])
+def delete_sections(id):
+  response = requests.delete(base_url+'/api/sections/'+str(id)).json()
+  print(response)
+  if response:
+    return redirect('/sections')
+  else:
+    return "sorry"

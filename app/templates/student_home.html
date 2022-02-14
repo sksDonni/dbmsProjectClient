@@ -22,12 +22,12 @@
         <tbody>
             {% for s in students.keys() %}
             <tr>
-                <th scope="row"> {{ students[s]['dept_id'] }}</th>
-                <td><a href="/students/{{students[s].dept_id}}">{{students[s]['student_name']}}</a></td>
+                <th scope="row"> {{ students[s]['student_id'] }}</th>
+                <td><a href="/students/{{students[s].student_id}}">{{students[s]['student_name']}}</a></td>
                 <td>{{ students[s]["credits"] }}</td>
                 <td><a href="/departments/{{students[s].dept_id}}">{{ department_names[students[s]["dept_id"]] }}</a></td>
                 <td>{{ students[s]["sec_id"] }}</td>
-                <td><a href="/students/{{students[s].dept_id}}/edit"><button>Edit</button></a></td>
+                <td><a href="/students/{{students[s].student_id}}/edit"><button>Edit</button></a></td>
                 <td>
                     <form action="/students/{{ students[s]['student_id'] }}/delete" method="post"> 
                     <button type="submit">Delete</button>

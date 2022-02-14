@@ -1,14 +1,17 @@
 from app import API, db
 from flask import request, jsonify, make_response
 from flask_restful import Resource
-from app.models import Student, Department, Section, Instructor, Course
+from app.models import Student, Department, Section, Instructor, Course, teaches, sec_course
 import json
+
 
 def serialize_single(item):
   print(item)
   item.pop('_sa_instance_state')
   print(item)
-  return jsonify(item) 
+  r = json.dumps(item).replace('null', '1')
+  r = json.loads(r)
+  return jsonify(r) 
 
 def serialize_list(records):
   serialized_list = {}
@@ -18,12 +21,36 @@ def serialize_list(records):
     item.pop('_sa_instance_state')
     serialized_list[i] = item
     i += 1
-  return jsonify(serialized_list)
+  r = json.dumps(serialized_list).replace('null', '1')
+  r = json.loads(r)
+  print(r)
+  return jsonify(r)
+
+def serialize_list_without_jsonify(records):
+  serialized_list = {}
+  i=0
+  for record in records:
+    item = record.__dict__
+    print(item)
+    if '_sa_instance_state' in item.keys():
+      item.pop('_sa_instance_state')
+    serialized_list[i] = item
+    i += 1
+  print(serialized_list)
+  return (serialized_list)
 
 class Department_API(Resource):
     def get(self):
       records = Department.query.all()
-      return serialize_list(records)
+      print(records)
+      if records:
+        print(records)
+        return serialize_list(records)
+      else:
+        error_dict = {"message":"department id not found in the database"}
+        response = make_response(jsonify(error_dict), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
 
     def post(self):
       print(request.json)
@@ -34,12 +61,16 @@ class Department_API(Resource):
         body = json.loads(body)
         print(body)
 
-      name = request.json['name']
-      budget = request.json['budget']
-      new_department = Department(name=name, dept_budget=budget)
+      name = body['name']
+      budget = body['budget']
+      building = None
+      if not building:
+        building = 'Main Building'
+      new_department = Department(name=name, dept_budget=budget, building=building)
       dict_copy = new_department.__dict__.copy()
       db.session.add(new_department)
       db.session.commit()
+      print(new_department)
       return serialize_single(dict_copy)
 
 class Individual_Department_API(Resource):
@@ -78,7 +109,7 @@ class Individual_Department_API(Resource):
         return serialize_single(updated_department_copy)
     
     def delete(self, id):
-      record = Department.query.filter(dept_id=id)
+      record = Department.query.get(id)
       if record == None:
         error_dict = {"message":"Department id not found in the database"}
         response = make_response(jsonify(error_dict), 401)
@@ -169,22 +200,90 @@ class Individual_Student_API(Resource):
 class Section_API(Resource):
     def get(self):
       records = Section.query.all()
-      return serialize_list(records)
+      # print(records)
+      # print()
+      s1 = serialize_list_without_jsonify(records)
+      print(s1)
+      for i in s1.keys():
+        # print(i)
+        s1[i]['instructors'] = serialize_list_without_jsonify(s1[i]['instructors'])
+      # print(s1)
+      return jsonify(s1)
 
     def post(self):
+      print(request.json)
       if request.json:
         body = str(request.json)
         print(type(request.json))
         body = body.replace("\'", "\"")
         body = json.loads(body)
         print(body)
-      semester = request.json['semester']
-      year = request.json['year']
-      new_section = Section(semester=semester, year=year)
-      dict_copy = new_section.__dict__.copy()
+      semester = body['semester']
+      year = body['year']
+      instructors=[Instructor.query.get(int(i)) for i in body['instructors']]
+      new_section = Section(semester=semester, year=year, instructors=instructors)
+      # for i in body["instructors"].keys():
+      #   a = Instructor.query.get(int(i))
+      #   new_section.instructors.append(a)
+      print(new_section.__dict__)
       db.session.add(new_section)
       db.session.commit()
-      return serialize_single(dict_copy)
+      return jsonify({"message":"Success!"})
+
+class Individual_Section_API(Resource):
+    def get(self, id):
+      record = Section.query.get(id)
+      if record == None:
+        error_dict = {"message":"instructor id not found in the database"}
+        response = make_response(jsonify(error_dict), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+      else:
+        r = []
+        r.append(record)
+        s1 = serialize_list_without_jsonify(r)
+        s1[0]['instructors'] = serialize_list_without_jsonify(s1[0]['instructors'])
+        print(s1)
+        return jsonify(s1)
+    
+    def put(self, id):
+      record = Section.query.get(id)
+      if request.json:
+        body = str(request.json)
+        print(type(request.json))
+        body = body.replace("\'", "\"")
+        body = json.loads(body)
+        print(body)
+
+      if record == None:
+        error_dict = {"message":"Instructor id not found in the database"}
+        response = make_response(jsonify(error_dict), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+      else:
+        semester = body['semester']
+        year = body['year']
+        instructors=[Instructor.query.get(int(i)) for i in body['instructors']]
+        record.semester = semester
+        record.year = year
+        record.instructors = instructors
+        db.session.commit()
+        return jsonify({"message":"success!!"})
+    
+    def delete(self, id):
+      record = Section.query.get(id)
+      if record == None:
+        error_dict = {"message":"student id not found in the database"}
+        response = make_response(jsonify(error_dict), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+      else:
+        record_copy = record.__dict__.copy()
+        db.session.delete(record)
+        db.session.commit()
+        return jsonify({"message":"success!!"})
+
+
 
 class Instructor_API(Resource):
     def get(self):
@@ -206,6 +305,9 @@ class Instructor_API(Resource):
       db.session.add(new_instructor)
       db.session.commit()
       return serialize_single(dict_copy)
+    
+    
+      
 
 
 class Individual_Instructor_API(Resource):
@@ -280,8 +382,7 @@ class Course_API(Resource):
       name = body['course_title']
       credits = body['credits']
       dept_id = body['dept_id']
-      course_tutor = body['course_tutor']
-      new_course = Course(course_title=name, dept_id=dept_id, course_credits=credits, course_tutor=course_tutor)
+      new_course = Course(course_title=name, dept_id=dept_id, course_credits=credits)
       dict_copy = new_course.__dict__.copy()
       db.session.add(new_course)
       db.session.commit()
@@ -300,6 +401,7 @@ class Individual_Course_API(Resource):
     
     def put(self, id):
       record = Course.query.get(id)
+      print(request.json)
       if request.json:
         body = str(request.json)
         print(type(request.json))
@@ -313,20 +415,18 @@ class Individual_Course_API(Resource):
         response.headers["Content-Type"] = "application/json"
         return response
       else:
-        name = body['name']
+        name = body['course_title']
         credits = body['credits']
         dept_id = body['dept_id']
-        tutor = body['tutor']
-        record.name = name
+        record.course_title = name
         record.credits = credits
         record.dept_id = dept_id
-        record.course_tutor = tutor
         updated_student_copy = record.__dict__.copy()
         db.session.commit()
         return serialize_single(updated_student_copy)
     
     def delete(self, id):
-      record = Student.query.get(id)
+      record = Course.query.get(id)
       if record == None:
         error_dict = {"message":"student id not found in the database"}
         response = make_response(jsonify(error_dict), 401)
@@ -338,7 +438,49 @@ class Individual_Course_API(Resource):
         db.session.commit()
         return serialize_single(record_copy)
 
-  
+class Teaches_API(Resource):
+    def get(self):
+      records = teaches.query.all()
+      return serialize_list(records)
+
+    def post(self):
+      print(request.json)
+      if request.json:
+        body = str(request.json)
+        print(type(request.json))
+        body = body.replace("\'", "\"")
+        body = json.loads(body)
+        print(body)
+      else:
+        error_dict = {"message":"invalid response"}
+        response = make_response(jsonify(error_dict), 401)
+        response.headers["Content-Type"] = "application/json"
+        return response
+      course_id = body['course_id']
+      sec_id = body['sec_id']
+      new_course = sec_course(course_id=course_id, sec_id=sec_id)
+      dict_copy = new_course.__dict__.copy()
+      db.session.add(new_course)
+      db.session.commit()
+      return serialize_single(dict_copy)
+
+class Individual_Teaches_API(Resource):
+    def get(self, id):
+      records = sec_course.query.filter(sec_course.sec_id == id)
+      return serialize_list(records)
+
+
+
+class Section_Courses_API(Resource):
+    def get(self):
+      records = teaches.query.all()
+      return serialize_list(records)
+    
+
+
+
+
+
 
 API.add_resource(Department_API, '/api/departments')
 API.add_resource(Student_API, '/api/students')
@@ -349,3 +491,5 @@ API.add_resource(Course_API, '/api/courses')
 API.add_resource(Individual_Student_API, '/api/students/<int:id>')
 API.add_resource(Individual_Instructor_API, '/api/instructors/<int:id>')
 API.add_resource(Individual_Department_API, '/api/departments/<int:id>')
+API.add_resource(Individual_Section_API, '/api/sections/<int:id>')
+API.add_resource(Individual_Course_API, '/api/courses/<int:id>')

@@ -9,9 +9,9 @@ class DepartmentAdd(Form):
     budget = IntegerField('Budget', validators=[DataRequired()])
 
 class SectionAdd(Form):
-    semester  = IntegerField('semester', validators=[DataRequired()])
-    year = IntegerField('year', validators=[DataRequired()])
-    instructors = SelectMultipleField('instructors', choices=[], validate_choice=False)
+    semester  = IntegerField('Semester', validators=[DataRequired()])
+    year = IntegerField('Year', validators=[DataRequired()])
+    instructors = SelectMultipleField('Instructors', choices=[], validate_choice=False)
 
 class CourseAdd(Form):
     title = StringField('Course Title', validators=[DataRequired()])
@@ -26,6 +26,10 @@ class StudentAdd(Form):
 
 
 class InstructorAdd(Form):
-    name = StringField('name', validators=[DataRequired()])
-    salary = IntegerField('salary', validators=[DataRequired()])
-    dept_id = SelectField('dept_id', choices=[], validate_choice=False)
+    name = StringField('Name', validators=[DataRequired()])
+    salary = IntegerField('Salary', validators=[DataRequired()])
+    dept_id = SelectField('Department', choices=[], validate_choice=False)
+
+class Section_course(Form):
+    course_id = SelectField('Course', validate_choice=False, choices=[])
+    sec_id = IntegerField('Section', validators=[DataRequired()])
