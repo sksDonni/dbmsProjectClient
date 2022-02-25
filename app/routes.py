@@ -10,6 +10,10 @@ import json
 base_url = 'http://127.0.0.1:5000/'
 
 @app.route('/')
+def first_page():
+  return render_template('start_page.html')
+
+@app.route('/home')
 def index():
   return render_template('home.html')
 
@@ -247,7 +251,7 @@ def instructors():
   instructors = requests.get(base_url+'/api/instructors').json()
   departments = requests.get(base_url+'/api/departments').json()
 
-  if departments and instructors:
+  if departments:
     department_names = {departments[dept]["dept_id"]: departments[dept]["name"] for dept in departments.keys()}
     return render_template('instructor_home.html', instructors=instructors, department_names=department_names) 
   else:
@@ -340,7 +344,7 @@ def courses():
   departments = requests.get(base_url+'/api/departments').json()
   instructors = requests.get(base_url+'/api/instructors').json()
   print(courses, departments, instructors)
-  if courses and departments:
+  if departments:
     department_names = {departments[dept]["dept_id"]: departments[dept]["name"] for dept in departments.keys()}
     department_names_choices = [(departments[dept]["dept_id"], departments[dept]["name"]) for dept in departments.keys()]
     
@@ -443,7 +447,7 @@ def sections():
   instructors = requests.get(base_url+'/api/instructors').json()
   students = requests.get(base_url+'/api/students').json()
   print(courses, departments, instructors)
-  if sections and instructors:    
+  if instructors:    
     instructor_names = {instructors[inst]["instructor_id"]: instructors[inst]["instructor_name"] for inst in instructors.keys()}
     instructor_names_choices = [(instructors[inst]["instructor_id"], instructors[inst]["instructor_name"]) for inst in instructors.keys()]
 

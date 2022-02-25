@@ -14,7 +14,7 @@
     <body>
         <div class="d-flex" id="wrapper">
             <!-- Sidebar-->
-            <div class="border-end bg-white" id="sidebar-wrapper">
+            <!-- <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light">UMS</div>
                 <div class="list-group list-group-flush">
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/students">Students</a>
@@ -24,35 +24,19 @@
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/departments">Departments</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/">Home</a>
                 </div>
-            </div>
+            </div> -->
             <!-- Page content wrapper-->
             <div id="page-content-wrapper">
-                <!-- Top navigation-->
-                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                    <div class="container-fluid">
-                        <button class="btn btn-primary" id="sidebarToggle">Menu</button>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                                <li class="nav-item active"><a class="nav-link" href="#!">Home</a></li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="/students">Students</a>
-                                        <a class="dropdown-item" href="/instructors">Instructors</a>
-                                        <a class="dropdown-item" href="/sections">Sections</a>
-                                        <a class="dropdown-item" href="/courses">Courses</a>
-                                        <a class="dropdown-item" href="/departments">Departments</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-                <!-- Page content-->
+                <div class="custom-shape-divider-top-1645776821">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                    </svg>
+                </div>
+                <div class="my-5 p-3">
+                    <h1 class="mt-4 text-center heading">UNIVERSITY MANAGEMENT SYSTEM</h1>
+                </div>
+                <div>{% block home%} {% endblock %}</div>
                 <div class="container">
-                    <h1 class="mt-4">University Management System</h1>
-                    <small>Developed by Suchith and Venkatesh</small>
                     {% block content %} 
                         <p>This project was developed by Suchith and Venkatesh</p>
                     {% endblock%}

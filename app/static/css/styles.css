@@ -70,7 +70,7 @@
   box-sizing: border-box;
 }
 
-.custom-shape-divider-top-1644806825 {
+.custom-shape-divider-top-1645719821 {
   position: absolute;
   top: 0;
   left: 0;
@@ -79,15 +79,15 @@
   line-height: 0;
 }
 
-.custom-shape-divider-top-1644806825 svg {
+.custom-shape-divider-top-1645719821 svg {
   position: relative;
   display: block;
   width: calc(100% + 1.3px);
-  height: 150px;
+  height: 126px;
 }
 
-.custom-shape-divider-top-1644806825 .shape-fill {
-  fill: #FFFFFF;
+.custom-shape-divider-top-1645719821 .shape-fill {
+  fill: #21214D;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -11321,6 +11321,17 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
   margin-left: 0;
 }
 
+body{
+  height: 100%;
+  width: 100%;
+  background-color: #1a1a1a;
+  /* background-image: url(https://images.unsplash.com/photo-1482977036925-e8fcaa643657?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60); */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+}
+
 @media (min-width: 768px) {
   #sidebar-wrapper {
     margin-left: 0;
@@ -11334,4 +11345,87 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
   body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
     margin-left: -15rem;
   }
+}
+
+a{
+  color: white;
+  text-decoration: none;
+}
+
+button a{
+  color: maroon;
+  text-decoration: none;
+}
+
+.img-logo{
+  width: 60%;
+  align-items: center;
+  margin: auto;
+}
+
+#logo{
+  height: 600px;
+  width: 600px;
+
+}
+
+td{
+  color: white
+}
+
+th{
+  color: white;
+}
+
+h3{
+  color: white;
+}
+
+.img-logo img{
+  align-items: center;
+  height: 500px;
+  width: 500px;
+  margin: auto;
+  
+}
+
+.container{
+  width: 60%;
+  margin: auto;
+}
+
+.main-container{
+  width: 70%;
+  margin: auto;
+}
+
+.card{
+  margin: 15px;
+  padding: 20px;
+  background-color: transparent;
+  border: 2px solid white; 
+}
+
+.heading{
+  color: white;
+}
+
+.custom-shape-divider-top-1645776821 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.custom-shape-divider-top-1645776821 svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 150px;
+}
+
+.custom-shape-divider-top-1645776821 .shape-fill {
+  fill: #FFFFFF;
 }
