@@ -11294,57 +11294,32 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-#wrapper {
-  overflow-x: hidden;
-}
-
-#sidebar-wrapper {
-  min-height: 100vh;
-  margin-left: -15rem;
-  transition: margin 0.25s ease-out;
-}
-
-#sidebar-wrapper .sidebar-heading {
-  padding: 0.875rem 1.25rem;
-  font-size: 1.2rem;
-}
-
-#sidebar-wrapper .list-group {
-  width: 15rem;
-}
-
-#page-content-wrapper {
-  min-width: 100vw;
-}
-
-body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
-  margin-left: 0;
-}
 
 body{
-  height: 100%;
-  width: 100%;
+  height: 1024px;
+  min-width: 100%;
   background-color: #1a1a1a;
-  /* background-image: url(https://images.unsplash.com/photo-1482977036925-e8fcaa643657?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60); */
+  /* font-family: 'Roboto', sans-serif; */
+}
+
+.home-page{
+  background-image: url('../polygons.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   color: white;
+  height: 100%;
 }
 
-@media (min-width: 768px) {
-  #sidebar-wrapper {
-    margin-left: 0;
-  }
+.img-logo{
+  width: 20%;
+  align-items: center;
+  margin: auto;
+}
 
-  #page-content-wrapper {
-    min-width: 0;
-    width: 100%;
-  }
-
-  body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
-    margin-left: -15rem;
-  }
+.dummy-container{
+  width: 80%;
+  margin:auto;
 }
 
 a{
@@ -11357,17 +11332,6 @@ button a{
   text-decoration: none;
 }
 
-.img-logo{
-  width: 60%;
-  align-items: center;
-  margin: auto;
-}
-
-#logo{
-  height: 600px;
-  width: 600px;
-
-}
 
 td{
   color: white
@@ -11392,6 +11356,11 @@ h3{
 .container{
   width: 60%;
   margin: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .main-container{
@@ -11404,28 +11373,4 @@ h3{
   padding: 20px;
   background-color: transparent;
   border: 2px solid white; 
-}
-
-.heading{
-  color: white;
-}
-
-.custom-shape-divider-top-1645776821 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-  line-height: 0;
-}
-
-.custom-shape-divider-top-1645776821 svg {
-  position: relative;
-  display: block;
-  width: calc(100% + 1.3px);
-  height: 150px;
-}
-
-.custom-shape-divider-top-1645776821 .shape-fill {
-  fill: #FFFFFF;
 }

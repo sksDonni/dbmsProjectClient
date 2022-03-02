@@ -447,7 +447,7 @@ def sections():
   instructors = requests.get(base_url+'/api/instructors').json()
   students = requests.get(base_url+'/api/students').json()
   print(courses, departments, instructors)
-  if instructors:    
+  if  instructors:    
     instructor_names = {instructors[inst]["instructor_id"]: instructors[inst]["instructor_name"] for inst in instructors.keys()}
     instructor_names_choices = [(instructors[inst]["instructor_id"], instructors[inst]["instructor_name"]) for inst in instructors.keys()]
 

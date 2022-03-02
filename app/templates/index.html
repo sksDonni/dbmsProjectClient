@@ -12,35 +12,16 @@
         <link href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
     </head>
     <body>
-        <div class="d-flex" id="wrapper">
-            <!-- Sidebar-->
-            <!-- <div class="border-end bg-white" id="sidebar-wrapper">
-                <div class="sidebar-heading border-bottom bg-light">UMS</div>
-                <div class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/students">Students</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/instructors">Instructors</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/sections">Sections</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/courses">Courses</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/departments">Departments</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/">Home</a>
-                </div>
-            </div> -->
-            <!-- Page content wrapper-->
-            <div id="page-content-wrapper">
-                <div class="custom-shape-divider-top-1645776821">
-                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-                    </svg>
-                </div>
-                <div class="my-5 p-3">
-                    <h1 class="mt-4 text-center heading">UNIVERSITY MANAGEMENT SYSTEM</h1>
-                </div>
-                <div>{% block home%} {% endblock %}</div>
-                <div class="container">
-                    {% block content %} 
-                        <p>This project was developed by Suchith and Venkatesh</p>
-                    {% endblock%}
-                </div>
+        <div class="home-page" id="wrapper">
+            <div class="p-3">
+                <h1 class="mt-4 text-center heading">UNIVERSITY MANAGEMENT SYSTEM</h1>
+            </div>
+            <div>{% block home%} {% endblock %}</div>
+            <div class="container">
+                {% block content %} 
+                {% endblock%}
+                {% block instructor %}
+                {% endblock %}
             </div>
         </div>
         <!-- Bootstrap core JS-->
